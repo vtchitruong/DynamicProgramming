@@ -1,6 +1,29 @@
 #include <bits/stdc++.h>
 
+#define inputFile "maxsum4.inp"
+#define outputFile "maxsum4.out"
+
 using namespace std;
+
+int n;
+vector<int> arr;
+
+void Input()
+{
+    ifstream f;
+    f.open(inputFile);
+
+    f >> n;
+
+    int x;
+    for (int i = 0; i < n; ++i)
+    {
+        f >> x;
+        arr.push_back(x);
+    }
+
+    f.close();
+}
 
 int maxSubsetSum(vector<int> a)
 {
@@ -16,9 +39,21 @@ int maxSubsetSum(vector<int> a)
     return sm[sm.size() - 1];
 }
 
+void Output()
+{
+    ofstream f;
+    f.open(outputFile);
+    
+    int res = maxSubsetSum(arr);
+    f << res;
+
+    f.close();
+}
+
 int main()
 {
-
+    Input();
+    Output();
 
     return 0;
 }
