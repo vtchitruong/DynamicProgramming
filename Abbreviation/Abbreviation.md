@@ -25,6 +25,9 @@ a = AbcDE
 b = AFDE  
 => return NO due to letter F.  
 
+### Source
+The problem can be found at [Hackerrank](https://www.hackerrank.com/challenges/abbr/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=dynamic-programming).
+
 
 
 
