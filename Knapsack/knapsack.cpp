@@ -4,8 +4,8 @@
 #include <stack>
 #include <iomanip>
 
-#define inputFile "knapsack.inp"
-#define outputFile "knapsack.out"
+#define inputFile "knapsack2.inp"
+#define outputFile "knapsack2.out"
 
 using namespace std;
 
@@ -38,6 +38,9 @@ vector<vector<int>> d;
 
 void Process()
 {
+    // init
+    // n + 1 rows: denotes items
+    // weightLimite + 1 columns: denotes limit of weight
     d.resize(n + 1, vector<int>(weightLimit + 1, 0));
 
     for (int i = 1; i < n + 1; ++i)
@@ -50,10 +53,7 @@ void Process()
             // re-assign d[i][w] when item i-th will be selected for better value
             if (weight[i] <=  w)
             {
-                if (d[i][w] < d[i - 1][w - weight[i]] + value[i]) // for better value
-                {
-                    d[i][w] = d[i - 1][w - weight[i]] + value[i];
-                }
+                d[i][w] = max(d[i][w], d[i - 1][w - weight[i]] + value[i]);
             }
         }
     }
@@ -61,10 +61,10 @@ void Process()
 
 void Output()
 {
-    stack<int> itemStack;
+    stack<int> itemStack; // used for item tracing
+    
+    int wl = weightLimit; // temp weight limit
     int i = n; // tmp number of item
-    int wl = weightLimit; // temp weight limit    
-
     while (i)
     {
         if (!(d[i][wl] == d[i - 1][wl]))
@@ -82,22 +82,37 @@ void Output()
 
     while (!itemStack.empty())
     {
-        f << itemStack.top();
-        if (itemStack.size() != 1) f << ' ';
+        int item = itemStack.top();
+        f << item << ' ' << weight[item] << ' ' << value[item];
+        if (itemStack.size() != 1) f << '\n';
         itemStack.pop();
     }
 
     f.close();
 }
 
-// show distribution table
+// show table
 void show()
 {
+    // display column titles
+    cout << string(6 + 2, ' ');
+    for (int c = 0; c < weightLimit + 1; ++c)
+    {
+        cout << setw(6) << c;
+    }
+    cout << endl;
+
+    // display a seperate line
+    cout << string(6 + 2, ' ');    
+    cout << string((weightLimit + 1) * 6, '-') << endl;
+ 
+    // display row titles and values
     for (int r = 0; r < n + 1; ++r)
     {
+        cout << setw(6) << r << " |";
         for (int c = 0; c < weightLimit + 1; ++c)
         {
-            cout << setw(4) << d[r][c] << ' ';
+            cout << setw(6) << d[r][c];
         }
         cout << endl;
     }
