@@ -14,6 +14,7 @@ def input_data():
         global rewards, students
         rewards, students = map(int, f.readline().split())
 
+#----------------------------------------------------------------------------
 # Approach 1: using table
 def process():
     # students + 1 rows
@@ -45,6 +46,7 @@ def process():
         for r in range(s, rewards + 1):
             d[s][r] = d[s - 1][r] + d[s][r - s]
 
+#----------------------------------------------------------------------------
 # Approach 2: using 1-dimension array
 
 # When reviewing the table d, we figure out that the first part of each row is the same as the previous row.
@@ -56,16 +58,20 @@ def process2():
     l = [0 for _ in range(rewards + 1)]
     l[0] = 1
     
+    # The 2D-array will be transformed to a 1D-array, which is a row
+    # Doing similar to the approach 1
+    # The row-subscript is skipped and the column-subscript is retained
     for s in range(1, students + 1):
         for r in range(s, rewards + 1):
             l[r] = l[r] + l[r - s]
 
+#----------------------------------------------------------------------------
 def output():
     with open(output_file, 'w') as f:            
         f.write(f'{d[students][rewards]}\n')
         f.write(f'{l[rewards]}')
 
-def show():
+def show_table():
     pt = PrettyTable()
     print(rewards)
 
@@ -81,10 +87,23 @@ def show():
         pt.add_row(row)
     print(pt)
 
+def show_array():
+    pt = PrettyTable()
+    
+    # column header
+    column_header = [r for r in range(rewards + 1)]
+    pt.field_names = column_header   
+    
+    # row of values
+    pt.add_row(l)
+    print(pt)
+
 if __name__ == '__main__':
     input_data()
     process()
-    show()
+    show_table()
 
     process2()
+    show_array()
+
     output()

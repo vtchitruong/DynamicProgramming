@@ -5,8 +5,8 @@
 
 using namespace std;
 
-#define inputFile "rs2.inp"
-#define outputFile "rs2.out"
+#define inputFile "rs1.inp"
+#define outputFile "rs1.out"
 
 int rewards, students;
 vector<vector<int>> d;
@@ -21,6 +21,7 @@ void Input()
     f.close();
 }
 
+//----------------------------------------------------------------------------
 // Approach 1: using table
 void Process()
 {
@@ -58,6 +59,7 @@ void Process()
     }
 }
 
+//----------------------------------------------------------------------------
 // Approach 2: using 1-dimension array
 
 // When reviewing the table d, we figure out that the first part of each row is the same as the previous row.
@@ -69,6 +71,9 @@ void Process2()
     v.resize(rewards + 1, 0);
     v[0] = 1;
 
+    // The 2D-array will be transformed to a 1D-array, which is a row
+    // Doing similar to the approach 1
+    // The row-subscript is skipped and the column-subscript is retained
     for (int s = 1; s < students + 1; ++s)
     {
         for (int r = s; r < rewards + 1; ++r)
@@ -146,7 +151,7 @@ int main()
     Process();
     Process2();
 
-    //ShowTable();
+    ShowTable();
     ShowArray();
 
     Output();
