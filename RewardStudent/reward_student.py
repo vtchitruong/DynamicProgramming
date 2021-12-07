@@ -82,7 +82,7 @@ def show_table():
 
     # row
     for s in range(students + 1):
-        row = [x for x in d[s]]; 
+        row = [x for x in d[s]]
         row.insert(0, s) # row header    
         pt.add_row(row)
     print(pt)
