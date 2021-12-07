@@ -33,14 +33,14 @@ void Input()
     f.close();
 }
 
-// d[i][w] stores the max total value of items from 1 to n, in which w is the limitation of weight
+// d[i][w] stores the max total value of items from 1 to n, in which w is the limit of weight
 vector<vector<int>> d;
 
 void Process()
 {
     // init
     // n + 1 rows: denotes items
-    // weightLimite + 1 columns: denotes limit of weight
+    // weightLimit + 1 columns: denotes limit of weight
     d.resize(n + 1, vector<int>(weightLimit + 1, 0));
 
     for (int i = 1; i < n + 1; ++i)
@@ -50,7 +50,7 @@ void Process()
             // suppose item i-th is not taken
             d[i][w] = d[i - 1][w];
 
-            // re-assign d[i][w] when item i-th will be selected for better value
+            // re-assign d[i][w] when item i-th will be selected for better total value
             if (weight[i] <=  w)
             {
                 d[i][w] = max(d[i][w], d[i - 1][w - weight[i]] + value[i]);
@@ -64,7 +64,7 @@ void Output()
     stack<int> itemStack; // used for item tracing
     
     int wl = weightLimit; // temp weight limit
-    int i = n; // tmp number of item
+    int i = n; // tmp number of an item
     while (i)
     {
         if (!(d[i][wl] == d[i - 1][wl]))
