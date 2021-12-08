@@ -1,22 +1,26 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <fstream>
+#include <stack>
+#include <algorithm>
 
-#define inputFile "lis3.inp"
-#define outputFile "lis3.out"
+#define inputFile "lis.inp"
+#define outputFile "lis.out"
 
 using namespace std;
 
 int n;
-vector<int> a;
+vector<int> a; // input array
 
-vector<int> d; // d[i] là độ dài lớn nhất của chuỗi con tính từ đầu tới i
-vector<int> trace;
+vector<int> d; // d[i] is the maximum length of 0-th to i-th subsequence
+vector<int> trace; // for marking and output
 
 void Input()
 {
     ifstream f;
     f.open(inputFile);
 
-    f >> n;
+    f >> n; // total number of element
 
     int x;
     for (int i = 0; i < n; ++i)
@@ -30,25 +34,27 @@ void Input()
 
 void Init()
 {
-    d.resize(n, 1); // khởi tạo độ dài lớn nhất của chuỗi con tăng là 1
+    d.resize(n, 1); // The initial longest of a subsequence is 1
 
     trace.resize(n, -1);
 }
 
 void Process()
 {
+    Init();
+
     for (int i = 1; i < n; ++i)
     {
-        for (int j = 0; j < i; ++j) // j là chỉ số của chuỗi con tính từ đầu đến i
+        for (int j = 0; j < i; ++j) // j is the index of the subsequence from 0 to i-th
         {
-            if (a[j] < a[i]) // xét tăng
+            if (a[j] < a[i]) // if increasing
             {
-                // d[j] + 1 là độ dài tính tới j và thêm 1 phần tử nữa
-                // Xét xem d[j] + 1 có lớn hơn độ dài dài nhất mà d[i] hiện đang giữ không
+                // d[j] + 1 is the length of the subsequence plus 1 more element
+                // We consider if d[j] + 1 is greater than d[i], which is storing the maximum length 
                 if (d[j] + 1 > d [i])
                 {
                     d[i] = d[j] + 1;
-                    trace[i] = j;
+                    trace[i] = j; // for tracing backward later
                 }
             }
         }
@@ -56,16 +62,18 @@ void Process()
 }
 
 void Output()
-{
-    stack<int> sub_arr;
-
+{   
+    // find the position that stores the maximum length
     vector<int>::iterator max_len = max_element(d.begin(), d.end());
+    
+    // the postition of the last element of the sub_arr
     int finish = max_len - d.begin();
 
+    stack<int> sub_arr;
     while (!(trace[finish] == -1))
     {
         sub_arr.push(a[finish]);
-        finish = trace[finish];
+        finish = trace[finish]; // trace backward
     }
     sub_arr.push(a[finish]);
 
@@ -86,8 +94,7 @@ void Output()
 
 int main()
 {
-    Input();
-    Init();    
+    Input();    
     Process();
     Output();
     return 0;
