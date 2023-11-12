@@ -5,8 +5,8 @@
 
 using namespace std;
 
-#define inputFile "rs1.inp"
-#define outputFile "rs1.out"
+#define inputFile "rs.inp"
+#define outputFile "rs.out"
 
 int rewards, students;
 vector<vector<int>> d;
@@ -25,9 +25,7 @@ void Input()
 // Approach 1: using table
 void Process()
 {
-    // init    
-    // students + 1 rows
-    // rewards + 1 cols
+    // init
     d.resize(students + 1, vector<int>(rewards + 1, 0));
 
     d[0][0] = 1; // 0 student receive 0 reward
@@ -35,7 +33,7 @@ void Process()
     for (int s = 1; s < students + 1; ++s)
     {
         // Case 1: rewards < students
-        // That means the student from number r + 1 to the end will receive nothing
+        // That means the student from number r + 1 to the end will receive nothing.
         // Only r students will receive r rewards.
         for (int r = 0; r < s; ++r)
         {
@@ -43,15 +41,13 @@ void Process()
         }
 
         // Case 2: rewards >= students
-        // In this case, we divide ways of rewarding into 2 groups
-        // Group 1: The last student (The worst) will receive nothing
+        // Case 2a: The last student (The worst) will receive nothing
         //     Therefore, the number of ways is d[s - 1][r]
 
-        // Group 2: The last student will receive something
+        // Case 2b: The last student will receive something
         //     That means all of the students will receiving something.
         //     If we cut 1 item out of each student's rewards, then the number of cutting items is (r - s)
         //     Therefore, the number of ways is d[s][r - s]
-
         for (int r = s; r < rewards + 1; ++r)
         {
             d[s][r] = d[s - 1][r] + d[s][r - s];
@@ -71,7 +67,7 @@ void Process2()
     v.resize(rewards + 1, 0);
     v[0] = 1;
 
-    // The 2D-array will be transformed to a 1D-array, which is a row
+    // The 2D-array will be transformed to a 1D-array, which is a row.
     // Doing similar to the approach 1
     // The row-subscript is skipped and the column-subscript is retained
     for (int s = 1; s < students + 1; ++s)
