@@ -1,6 +1,6 @@
 #include <iostream>
-#include <vector>
 #include <fstream>
+#include <vector>
 #include <stack>
 #include <algorithm>
 
@@ -32,16 +32,12 @@ void Input()
     f.close();
 }
 
-void Init()
+void Process()
 {
+    // Init
     d.resize(n, 1); // The initial longest of a subsequence is 1
 
     trace.resize(n, -1);
-}
-
-void Process()
-{
-    Init();
 
     for (int i = 1; i < n; ++i)
     {
@@ -66,27 +62,27 @@ void Output()
     // find the position that stores the maximum length
     vector<int>::iterator max_len = max_element(d.begin(), d.end());
     
-    // the postition of the last element of the sub_arr
+    // the postition of the last element of the sub_seq
     int finish = max_len - d.begin();
 
-    stack<int> sub_arr;
+    stack<int> sub_seq; // subsequence
     while (!(trace[finish] == -1))
     {
-        sub_arr.push(a[finish]);
+        sub_seq.push(a[finish]);
         finish = trace[finish]; // trace backward
     }
-    sub_arr.push(a[finish]);
+    sub_seq.push(a[finish]);
 
     ofstream f;
     f.open(outputFile);
     
     f << *max_len << endl;
 
-    while (!sub_arr.empty())
+    while (!sub_seq.empty())
     {
-        f << sub_arr.top();
-        if (sub_arr.size() > 1) f << ' ';
-        sub_arr.pop();
+        f << sub_seq.top();
+        if (sub_seq.size() > 1) f << ' ';
+        sub_seq.pop();
     }
 
     f.close();
