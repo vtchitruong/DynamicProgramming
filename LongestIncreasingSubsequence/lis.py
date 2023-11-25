@@ -1,6 +1,7 @@
 import os
 import sys
 from collections import deque
+from prettytable import PrettyTable
 
 input_file = os.path.join(sys.path[0], 'lis.inp')
 output_file = os.path.join(sys.path[0], 'lis.out')
@@ -51,7 +52,32 @@ def output():
         f.write(s)
 
 
+def show_arrays():
+
+    pt = PrettyTable()
+
+    column_header = [r for r in range(n)]
+    column_header.insert(0, '')
+    pt.field_names = column_header
+
+    tmp_a = a.copy()
+    tmp_a.insert(0, 'a')
+
+    tmp_d = d.copy()
+    tmp_d.insert(0, 'd')
+
+    tmp_trace = trace.copy()
+    tmp_trace.insert(0, 'trace')
+
+    pt.add_row(tmp_a)
+    pt.add_row(tmp_d)
+    pt.add_row(tmp_trace)
+    print(pt)
+
+
 if __name__ == '__main__':
     input_data()
     process()
+    show_arrays()    
     output()
+    

@@ -3,6 +3,8 @@
 #include <vector>
 #include <stack>
 #include <algorithm>
+#include <iomanip>
+
 
 #define inputFile "lis.inp"
 #define outputFile "lis.out"
@@ -88,10 +90,46 @@ void Output()
     f.close();
 }
 
+void ShowArrays()
+{
+    cout << string(6 + 2, ' ');
+    for (int col = 0; col < n; ++col)
+    {
+        cout << setw(6) << col;
+    }
+    cout << endl;
+
+    // display a seperate line
+    cout << string(6 + 2, ' ');
+    cout << string(n * 6, '-') << endl;
+
+    cout << setw(8) << "a |";
+    for (int col = 0; col < n; ++col)
+    {
+        cout << setw(6) << a[col];
+    }
+    cout << endl;
+
+    cout << setw(8) << "d |";
+    for (int col = 0; col < n; ++col)
+    {
+        cout << setw(6) << d[col];
+    }
+    cout << endl;   
+
+    cout << setw(8) << "trace |";
+    for (int col = 0; col < n; ++col)
+    {
+        cout << setw(6) << trace[col];
+    }
+    cout << endl;   
+}
+
 int main()
 {
     Input();    
     Process();
+    ShowArrays();
     Output();
     return 0;
 }
