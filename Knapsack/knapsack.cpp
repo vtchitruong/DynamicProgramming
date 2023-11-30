@@ -4,8 +4,8 @@
 #include <stack>
 #include <iomanip>
 
-#define inputFile "knapsack2.inp"
-#define outputFile "knapsack2.out"
+#define inputFile "knapsack.inp"
+#define outputFile "knapsack.out"
 
 using namespace std;
 
@@ -14,6 +14,9 @@ int weightLimit;
 
 vector<int> weight;
 vector<int> value;
+
+// d[i][w] stores the max total value of items from 1 to n, in which w is the limit of weight
+vector<vector<int>> d;
 
 void Input()
 {
@@ -33,8 +36,7 @@ void Input()
     f.close();
 }
 
-// d[i][w] stores the max total value of items from 1 to n, in which w is the limit of weight
-vector<vector<int>> d;
+
 
 void Process()
 {
@@ -47,7 +49,7 @@ void Process()
     {          
         for (int w = 1; w < weightLimit + 1; ++w)
         {
-            // suppose item i-th is not taken
+            // suppose item i-th is not selected
             d[i][w] = d[i - 1][w];
 
             // re-assign d[i][w] when item i-th will be selected for better total value
@@ -61,13 +63,14 @@ void Process()
 
 void Output()
 {
-    stack<int> itemStack; // used for item tracing
+    stack<int> itemStack; // contains items in order
     
     int wl = weightLimit; // temp weight limit
     int i = n; // tmp number of an item
     while (i)
     {
-        if (!(d[i][wl] == d[i - 1][wl]))
+        // The weight changes due to item i
+        if (d[i][wl] != d[i - 1][wl])
         {
             itemStack.push(i);
             wl = wl - weight[i];
@@ -84,7 +87,7 @@ void Output()
     {
         int item = itemStack.top();
         f << item << ' ' << weight[item] << ' ' << value[item];
-        if (itemStack.size() != 1) f << '\n';
+        if (itemStack.size() > 1) f << '\n';
         itemStack.pop();
     }
 
@@ -120,12 +123,9 @@ void show()
 
 int main()
 {
-    Input();  
-
+    Input();
     Process();
     show();      
-
     Output();
-
     return 0;
 }

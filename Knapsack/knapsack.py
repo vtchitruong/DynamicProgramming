@@ -5,7 +5,7 @@ from prettytable import PrettyTable
 input_file = os.path.join(sys.path[0], 'knapsack.inp')
 output_file = os.path.join(sys.path[0], 'knapsack.out')
 
-#-----------------------------------------------------------------------------
+
 def input_data():
     global n, weight_limit
     global weight, value
@@ -22,12 +22,11 @@ def input_data():
             weight.append(w)
             value.append(v)
 
-#-----------------------------------------------------------------------------
+
 def process():
     # d[i][w] stores the max total value of items from 1 to n,
     # in which w is the limit of weight
     global d
-    d = list()
 
     # init
     # n + 1 rows: denotes items
@@ -43,25 +42,26 @@ def process():
             if weight[i] <= w:
                 d[i][w] = max(d[i][w], d[i - 1][w - weight[i]] + value[i])
 
-#-----------------------------------------------------------------------------
+
 def output():
-    s = list() # this is used as a stack
+    item_stack = list() # used as a stack which contains items in order
 
     wl = weight_limit # temp weight limit
     i = n # temp number of an item
     while i:
+        # The weight changes due to item i
         if not d[i][wl] == d[i - 1][wl]:
-            s.append(i)
+            item_stack.append(i)
             wl = wl - weight[i]
         i -= 1
 
     with open(output_file, 'w') as f:
         f.write(f'{d[n][weight_limit]}\n')
-        for idx, item in enumerate(reversed(s)):
+        for idx, item in enumerate(reversed(item_stack)):
             line = f'{item} {weight[item]} {value[item]}'
-            f.write(line) if idx == len(s) - 1 else f.write(line + '\n')
+            f.write(line) if idx == len(item_stack) - 1 else f.write(line + '\n')
 
-#-----------------------------------------------------------------------------
+
 def show_table():
     pt = PrettyTable()
 
@@ -77,7 +77,7 @@ def show_table():
         pt.add_row(row)
     print(pt)
 
-#-----------------------------------------------------------------------------
+
 if __name__ == '__main__':
     input_data()
     process()
