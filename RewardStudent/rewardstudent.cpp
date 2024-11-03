@@ -3,114 +3,113 @@
 #include <fstream>
 #include <iomanip>
 
+#define input_file "rewardstudent.inp"
+#define output_file "rewardstudent.out"
+
 using namespace std;
 
-#define inputFile "rs.inp"
-#define outputFile "rs.out"
+int reward; // tổng số phần thưởng
+int student; // tổng số học sinh
 
-int rewards, students;
-vector<vector<int>> d;
+// D[r][s] là số cách mà s học sinh nhận r phần thưởng
+vector<vector<int>> D;
 
-void Input()
+
+void input()
 {
-    ifstream f;
-    f.open(inputFile);
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
 
-    f >> rewards >> students;
+    freopen(input_file, "r", stdin);
 
-    f.close();
+    cin >> reward >> student;
 }
 
-//----------------------------------------------------------------------------
-// Approach 1: using table
-void Process()
-{
-    // init
-    d.resize(students + 1, vector<int>(rewards + 1, 0));
 
-    d[0][0] = 1; // 0 student receive 0 reward
+// Cách 1: sử dụng mảng hai chiều
+void process()
+{
+    // Khởi tạo giá trị 0 cho toàn bảng quy hoạch
+    D.resize(student + 1, vector<int>(reward + 1, 0));
+
+    // Chỉ có 1 cách để 0 học sinh nhận 0 phần thưởng
+    D[0][0] = 1;
     
-    for (int s = 1; s < students + 1; ++s)
+
+    // Duyệt hàng (số học sinh) bằng biến s trong phạm vi [1..student]
+    for (int s = 1; s < student + 1; ++s)
     {
-        // Case 1: rewards < students
-        // That means the student from number r + 1 to the end will receive nothing.
-        // Only r students will receive r rewards.
+        // Trường hợp 1: số phần thưởng < số học sinh
+        // Chỉ có r học sinh được nhận r phần thưởng
+
+        // Duyệt cột (số phần thưởng) bằng biến r trong phạm vi [0..s - 1]
         for (int r = 0; r < s; ++r)
         {
-            d[s][r] = d[r][r];
+            D[s][r] = D[r][r];
         }
 
-        // Case 2: rewards >= students
-        // Case 2a: The last student (The worst) will receive nothing
-        //     Therefore, the number of ways is d[s - 1][r]
+        // Trường họp 2: số phần thưởng >= số học sinh
+        // Trường họp 2a: học sinh hạng chót sẽ không được nhận thưởng
+        // Số cách chia thưởng là D[s - 1][r]
 
-        // Case 2b: The last student will receive something
-        //     That means all of the students will receiving something.
-        //     If we cut 1 item out of each student's rewards, then the number of cutting items is (r - s)
-        //     Therefore, the number of ways is d[s][r - s]
-        for (int r = s; r < rewards + 1; ++r)
+        // Trường họp 2b: học sinh hạng chót vẫn được nhận thưởng
+        // Số cách chia thưởng D[s][r] sẽ không thay đổi nếu ta bỏ bớt 1 phần thưởng của mỗi học sinh. Số phần thưởng tạm bỏ bớt là (r - s) 
+        // Số cách chia thưởng là D[s][r - s]
+
+        // Duyệt cột (số phần thưởng) bằng biến r trong phạm vi [s..reward]
+        for (int r = s; r < reward + 1; ++r)
         {
-            d[s][r] = d[s - 1][r] + d[s][r - s];
+            D[s][r] = D[s - 1][r] + D[s][r - s];
         }
     }
 }
 
-//----------------------------------------------------------------------------
-// Approach 2: using 1-dimension array
 
-// When reviewing the table d, we figure out that the first part of each row is the same as the previous row.
-// Therefore, we just need to calculate the remaining values of the row.
-vector<int> v;
-void Process2()
+// Cách 2: sử dụng mảng một chiều
+vector<int> V;
+void process2()
 {
-    // init
-    v.resize(rewards + 1, 0);
-    v[0] = 1;
+    V.resize(reward + 1, 0);
+    V[0] = 1;
 
-    // The 2D-array will be transformed to a 1D-array, which is a row.
-    // Doing similar to the approach 1
-    // The row-subscript is skipped and the column-subscript is retained
-    for (int s = 1; s < students + 1; ++s)
+    for (int s = 1; s < student + 1; ++s)
     {
-        for (int r = s; r < rewards + 1; ++r)
+        for (int r = s; r < reward + 1; ++r)
         {
-            v[r] = v[r] + v[r - s];
+            V[r] = V[r] + V[r - s];
         }
     }
 }
 
-void Output()
+
+void output()
 {
-    ofstream f;
-    f.open(outputFile);
-
-    f << d[students][rewards] << endl;
-    f << v[rewards];
-
-    f.close();
+    freopen(output_file, "w", stdout);
+    cout << D[student][reward];
 }
 
-void ShowTable()
+
+void show_table()
 {
-    // display column titles
+    // In tiêu đề cột
     cout << string(6 + 2, ' ');
-    for (int col = 0; col < rewards + 1; ++col)
+    for (int col = 0; col < reward + 1; ++col)
     {
         cout << setw(6) << col;
     }
     cout << endl;
 
-    // display a seperate line
+    // In đường phân cách
     cout << string(6 + 2, ' ');    
-    cout << string((rewards + 1) * 6, '-') << endl;
+    cout << string((reward + 1) * 6, '-') << endl;
  
-    // display row titles and values    
-    for (int row = 0; row < students + 1; ++row)
+    // In tiêu đề hàng và các giá trị    
+    for (int row = 0; row < student + 1; ++row)
     {
         cout << setw(6) << row << " |";
-        for (int col = 0; col < rewards + 1; ++col)
+        for (int col = 0; col < reward + 1; ++col)
         {
-            cout << setw(6) << d[row][col];
+            cout << setw(6) << D[row][col];
         }
         cout << endl;
     }
@@ -118,38 +117,36 @@ void ShowTable()
     cout << endl;
 }
 
-void ShowArray()
+
+void show_array()
 {
-    // display titles
+    // In tiêu đề
     cout << string(6 + 2, ' ');
-    for (int col = 0; col < rewards + 1; ++col)
+    for (int col = 0; col < reward + 1; ++col)
     {
         cout << setw(6) << col;
     }
     cout << endl;
 
-    // display a seperate line
+    // In đường phân cách
     cout << string(6 + 2, ' ');    
-    cout << string((rewards + 1) * 6, '-') << endl;
+    cout << string((reward + 1) * 6, '-') << endl;
  
-    // display values    
+    // In giá trị  
     cout << setw(8) << " |";
-    for (int col = 0; col < rewards + 1; ++col)
+    for (int col = 0; col < reward + 1; ++col)
     {
-        cout << setw(6) << v[col];
+        cout << setw(6) << V[col];
     }
     cout << endl;    
 }
 
+
 int main()
 {
-    Input();
-    Process();
-    Process2();
+    input();
+    process();
+    output();
 
-    ShowTable();
-    ShowArray();
-
-    Output();
     return 0;
 }
