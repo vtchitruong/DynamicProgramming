@@ -1,131 +1,142 @@
 #include <iostream>
 #include <vector>
-#include <fstream>
 #include <stack>
 #include <iomanip>
 
-#define inputFile "knapsack.inp"
-#define outputFile "knapsack.out"
+#define input_file "knapsack.inp"
+#define output_file "knapsack.out"
 
 using namespace std;
 
-int n; // number of items
-int weightLimit;
+int n; // tổng số vật
+int weight_limit; // giới hạn trọng lượng của balo
 
-vector<int> weight;
-vector<int> value;
+vector<int> weight; // mảng lưu trọng lượng mỗi vật
+vector<int> value; // mảng lưu giá trị mỗi vật
 
-// d[i][w] stores the max total value of items from 1 to n, in which w is the limit of weight
-vector<vector<int>> d;
+// D[i][w] là tổng giá trị lớn nhất khi chọn một số vật nào đó trong phạm vi [0..i] mà tổng trọng lượng không vượt quá `w`.
+vector<vector<int>> D;
 
-void Input()
+
+void input()
 {
-    ifstream f;
-    f.open(inputFile);
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
 
-    f >> n >> weightLimit;
+    freopen(input_file, "r", stdin);
+
+    cin >> n >> weight_limit;
 
     weight.resize(n + 1, 0);
     value.resize(n + 1, 0);
 
     for (int i = 1; i < n + 1; ++i)
     {
-        f >> weight[i] >> value[i];
+        cin >> weight[i] >> value[i];
     }
-
-    f.close();
 }
 
 
-
-void Process()
+void process()
 {
-    // init
-    // n + 1 rows: denotes items
-    // weightLimit + 1 columns: denotes limit of weight
-    d.resize(n + 1, vector<int>(weightLimit + 1, 0));
+    // Khởi tạo giá trị 0 cho toàn bảng quy hoạch
+    D.resize(n + 1, vector<int>(weight_limit + 1, 0));
 
+    // Duyệt từng vật i trong phạm vi [1..n]
     for (int i = 1; i < n + 1; ++i)
-    {          
-        for (int w = 1; w < weightLimit + 1; ++w)
+    {
+        // Duyệt từng giới hạn trọng lượng w trong phạm vi [1..weight_limit]
+        for (int w = 1; w < weight_limit + 1; ++w)
         {
-            // suppose item i-th is not selected
-            d[i][w] = d[i - 1][w];
-
-            // re-assign d[i][w] when item i-th will be selected for better total value
+            // Giả sử không chọn vật i
+            // Tổng giá trị các vật được chọn sẽ không thay đổi, tức vẫn là D[i - 1][w]
+            D[i][w] = D[i - 1][w];
+            
+            // Nếu trọng lượng vật i không vượt quá giới hạn w
             if (weight[i] <=  w)
             {
-                d[i][w] = max(d[i][w], d[i - 1][w - weight[i]] + value[i]);
+                // Xét xem giữa chọn và không chọn vật i, trường hợp nào làm cho tổng giá trị là lớn nhất
+                D[i][w] = max(D[i][w], D[i - 1][w - weight[i]] + value[i]);
             }
         }
     }
 }
 
-void Output()
+
+void output()
 {
-    stack<int> itemStack; // contains items in order
+    // Ngăn xếp chứa các vật được chọn
+    stack<int> item_stack;
     
-    int wl = weightLimit; // temp weight limit
-    int i = n; // tmp number of an item
+    // Biến tạm wl dùng để lưu giới hạn trọng lượng
+    int wl = weight_limit;
+
+    // Biến tạm i dùng để lưu số thứ tự của vật
+    int i = n;
+
+    // Lặp cho đến khi i == 0 thì dừng
     while (i)
     {
-        // The weight changes due to item i
-        if (d[i][wl] != d[i - 1][wl])
+        // Nếu tổng giá trị có sự thay đổi, nghĩa là vật i được chọn
+        if (D[i][wl] != D[i - 1][wl])
         {
-            itemStack.push(i);
+            // thì đẩy vật i vào ngăn xếp
+            item_stack.push(i);
+
+            // Lấy giới hạn trọng lượng còn lại sau khi đẩy vật i vào ngăn xếp
             wl = wl - weight[i];
         }
+
         --i;
     }
 
-    ofstream f;
-    f.open(outputFile);
+    freopen(output_file, "w", stdout);
 
-    f << d[n][weightLimit] << '\n';
+    cout << D[n][weight_limit] << '\n';
 
-    while (!itemStack.empty())
+    while (!item_stack.empty())
     {
-        int item = itemStack.top();
-        f << item << ' ' << weight[item] << ' ' << value[item];
-        if (itemStack.size() > 1) f << '\n';
-        itemStack.pop();
+        i = item_stack.top();
+        cout << i << ' ' << weight[i] << ' ' << value[i];
+        if (item_stack.size() > 1) cout << '\n';
+        item_stack.pop();
     }
-
-    f.close();
 }
 
-// show table
-void show()
+// Hàm in bảng quy hoạch
+void show_table()
 {
-    // display column titles
+    // In tiêu đề cột
     cout << string(6 + 2, ' ');
-    for (int c = 0; c < weightLimit + 1; ++c)
+    for (int c = 0; c < weight_limit + 1; ++c)
     {
         cout << setw(6) << c;
     }
-    cout << endl;
 
-    // display a seperate line
+    cout << '\n';
+
+    // In đường phân cách
     cout << string(6 + 2, ' ');    
-    cout << string((weightLimit + 1) * 6, '-') << endl;
+    cout << string((weight_limit + 1) * 6, '-') << '\n';
  
     // display row titles and values
     for (int r = 0; r < n + 1; ++r)
     {
         cout << setw(6) << r << " |";
-        for (int c = 0; c < weightLimit + 1; ++c)
+        for (int c = 0; c < weight_limit + 1; ++c)
         {
-            cout << setw(6) << d[r][c];
+            cout << setw(6) << D[r][c];
         }
-        cout << endl;
+        cout << '\n';
     }
 }
 
+
 int main()
 {
-    Input();
-    Process();
-    show();      
-    Output();
+    input();
+    process();
+    output();
+
     return 0;
 }
