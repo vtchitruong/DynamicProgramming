@@ -3,8 +3,8 @@
 #include <deque>
 #include <algorithm>
 
-#define input_file "trochoi.inp"
-#define output_file "troichoi.out"
+#define input_file "moveright.inp"
+#define output_file "moveright.out"
 
 using namespace std;
 

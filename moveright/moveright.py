@@ -2,8 +2,8 @@ import os
 import sys
 from collections import deque
 
-input_file = os.path.join(sys.path[0], 'trochoi.inp')
-output_file = os.path.join(sys.path[0], 'trochoi.out')
+input_file = os.path.join(sys.path[0], 'moveright.inp')
+output_file = os.path.join(sys.path[0], 'moveright.out')
 
 n = k = 0
 A = []
